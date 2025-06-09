@@ -1,0 +1,109 @@
+import React, { useState } from "react";
+import flights from "./data/Flights";
+import "./Flightdb.css";
+
+function FlightWidget() {
+  const [showExportDropdown, setShowExportDropdown] = useState(false);
+
+  const toggleExport = () => {
+    setShowExportDropdown(!showExportDropdown);
+  };
+  const [activeTab, setActiveTab] = useState("Departures");
+
+  const handleToggle = (type) => setActiveTab(type);
+
+  const filteredFlights = flights; // no filtering based on status
+
+
+  return (
+    <div className="widget-container">
+      {/* Top line */}
+      <div className="top-bar">
+  <div className="info-text">Dep/Arr in next 6 hours</div>
+  <div className="controls">
+  <span style={{ marginLeft: "6px" }}>▼</span>
+
+  <button className="filter-btn">
+
+  <span role="img" aria-label="filter" style={{ marginRight: "8px" }}>🔍</span>
+  Filters 
+</button>
+<div className="export-dropdown">
+          <span
+            role="img"
+            aria-label="export"
+            className="export-icon"
+            onClick={toggleExport}
+          >
+            📤
+          </span>
+
+          {showExportDropdown && (
+            <div className="dropdown-menu">
+              <div>Export as PDF</div>
+              <div>Export as Excel</div>
+            </div>
+          )}
+        </div>
+    <button className="icon-btn">−</button>
+    <button className="icon-btn">×</button>
+  </div>
+</div>
+
+
+      {/* Toggle line */}
+      <div className="toggle-bar">
+  <button
+    className={`${
+      activeTab === "Departures" ? "active departures" : ""
+    }`}
+    onClick={() => handleToggle("Departures")}
+  >
+    Departures
+  </button>
+  <button
+    className={`${
+      activeTab === "Arrivals" ? "active arrivals" : ""
+    }`}
+    onClick={() => handleToggle("Arrivals")}
+  >
+    Arrivals
+  </button>
+</div>
+
+
+      {/* Flight list */}
+      <div className="widget-table">
+  <div className="widget-row header">
+    <div>Flight</div>
+    <div>Aircraft Reg</div>
+    <div>Time</div>
+    <div>Crew</div>
+  </div>
+
+  <div className="flight-scroll-container">
+    {filteredFlights.map((item, idx) => (
+      <div
+        className={`widget-row ${
+          item.status === "Takeoff" ? "takeoff" : "landing"
+        }`}
+        key={idx}
+      >
+        <div>
+          <a href={`/flights/${item.flight}`} className="flight-link">
+            {item.flight}
+          </a>
+        </div>
+        <div>{item.gate}</div>
+        <div>{item.date}</div>
+        <div className="status">{item.crew}</div>
+      </div>
+    ))}
+  </div>
+</div>
+
+    </div>
+  );
+}
+
+export default FlightWidget;
