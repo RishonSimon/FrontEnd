@@ -38,7 +38,7 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
-    padding: 16px; /* Added padding for inner content */
+    padding: 10px; /* Added padding for inner content */
     gap: 10px; /* Space between child elements */
     transition: all 0.3s ease;
     user-select: none;
@@ -74,7 +74,7 @@
   
   .info-text {
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
     text-align: left;
     color: #fbfffe;
     white-space: nowrap;
@@ -211,7 +211,7 @@
   
   /* Landing row color */
   .widget-row.landing {
-    background-color: #93b5c5; /* light blue */
+    background-color: #d0d5d8; /* light blue */
     color: #004466;
     display: flex;
     justify-content: space-around;

@@ -14,13 +14,34 @@ function FlightWidget() {
 
   const filteredFlights = flights; // no filtering based on status
 
+  const [infoText, setInfoText] = useState("Dep/Arr in next 6 hours");
+  const [editingInfo, setEditingInfo] = useState(false);
 
+  const handleInfoClick = () => setEditingInfo(true);
+  const handleInfoChange = (e) => setInfoText(e.target.value);
+  const handleInfoBlur = () => setEditingInfo(false);
+  const handleInfoKey = (e) => {
+    if (e.key === "Enter") setEditingInfo(false);
+  };
   return (
     <div className="widget-container">
       {/* Top line */}
       <div className="top-bar">
-  <div className="info-text">Dep/Arr in next 6 hours</div>
-  <div className="controls">
+      <div className="info-text">
+          {editingInfo ? (
+            <input
+              type="text"
+              value={infoText}
+              onChange={handleInfoChange}
+              onBlur={handleInfoBlur}
+              onKeyDown={handleInfoKey}
+              autoFocus
+              className="info-input"
+            />
+          ) : (
+            <span onClick={handleInfoClick}>{infoText}</span>
+          )}
+        </div>  <div className="controls">
   <span style={{ marginLeft: "6px" }}>▼</span>
 
   <button className="filter-btn">
