@@ -11,7 +11,7 @@
 /* Header with gradient and shadow */
 .dashboard-header {
   height: 72px;
-  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  background: linear-gradient(90deg, #0950e9, #73a7fc);
   color: #ffffff;
   display: flex;
   align-items: center;

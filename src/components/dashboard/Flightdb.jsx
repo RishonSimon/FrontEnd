@@ -52,24 +52,13 @@ function FlightWidget() {
 
 
       {/* Toggle line */}
-      <div className="toggle-bar">
-  <button
-    className={`${
-      activeTab === "Departures" ? "active departures" : ""
-    }`}
-    onClick={() => handleToggle("Departures")}
-  >
-    Departures
-  </button>
-  <button
-    className={`${
-      activeTab === "Arrivals" ? "active arrivals" : ""
-    }`}
-    onClick={() => handleToggle("Arrivals")}
-  >
-    Arrivals
-  </button>
+      <div class="toggle-bar">
+  <button class="toggle-btn active airport">Airport</button>
+  <button class="toggle-btn aircraft">Aircraft Subtype</button>
+
+  
 </div>
+
 
 
       {/* Flight list */}
@@ -82,6 +71,7 @@ function FlightWidget() {
   </div>
 
   <div className="flight-scroll-container">
+  <div class="widget-table">
     {filteredFlights.map((item, idx) => (
       <div
         className={`widget-row ${
@@ -99,6 +89,7 @@ function FlightWidget() {
         <div className="status">{item.crew}</div>
       </div>
     ))}
+    </div>
   </div>
 </div>
 
