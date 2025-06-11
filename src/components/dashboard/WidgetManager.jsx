@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, SearchCheckIcon, SearchIcon, X } from 'lucide-react';
 import DelayWidget from './DelayWidget';
 import './WidgetManager.css';
 import FlightWidget from './Flightdb';
@@ -8,6 +8,7 @@ const WidgetManager = ({ widgets, setWidgets }) => {
   const [draggedWidget, setDraggedWidget] = React.useState(null);
   const [dragOffset, setDragOffset] = React.useState({ x: 0, y: 0 });
   const [showWidgetMenu, setShowWidgetMenu] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState(''); 
 
   const widgetTypes = [
     { id: 'delay-departments', name: 'Delay by Department', description: 'Shows delay percentages by department' },
@@ -199,7 +200,15 @@ const WidgetManager = ({ widgets, setWidgets }) => {
         {showWidgetMenu && (
           <div className="widget-menu" role="menu" aria-label="Widget selection menu">
             <div className="widget-menu-header">
-              <h3>Add Widget</h3>
+              {/* <h3>Add Widget</h3> */}
+              <SearchIcon size={25} className="search-icon" />
+               <input
+                type="text"
+                placeholder="Search widgets..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="search-bar"
+              />
               <button 
                 className="btn-icon"
                 onClick={() => setShowWidgetMenu(false)}
@@ -208,9 +217,12 @@ const WidgetManager = ({ widgets, setWidgets }) => {
               >
                 <X size={16} />
               </button>
+              
+             
+
             </div>
             <div className="widget-menu-content">
-              {widgetTypes.map(widgetType => (
+              {widgetTypes.filter(widgetType => widgetType.name.toLowerCase().includes(searchQuery.toLowerCase())).map(widgetType => (
                 <button
                   key={widgetType.id}
                   className="widget-menu-item"

@@ -51,6 +51,8 @@ const DelayWidget = ({ widget, onRemove, onMove, onMouseDown, isDragging }) => {
   });
   const [tooltip, setTooltip] = React.useState(null);
   const canvasRef = React.useRef(null);
+  
+  const [savedSettings, setSavedSettings] = React.useState(null);
 
   // Save settings to localStorage
   React.useEffect(() => {
@@ -62,6 +64,46 @@ const DelayWidget = ({ widget, onRemove, onMove, onMouseDown, isDragging }) => {
     const data = delayData[settings.timeInterval] || delayData['24h'];
     return data.slice(0, settings.topDepartments);
   }, [settings.timeInterval, settings.topDepartments]);
+
+    
+const handleMinimize = () => {
+  if (!isMinimized) {
+    setSavedSettings({
+      chartType,
+      settings,
+      currentData
+    });
+  }
+  setIsMinimized(!isMinimized);
+};
+
+const toggleChartType = () => {
+  setChartType(prevChartType => {
+    const newChartType = prevChartType === 'pie' ? 'bar' : 'pie';
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (newChartType === 'pie') {
+        drawPieChart(ctx, currentData);
+      } else {
+        drawBarChart(ctx, currentData);
+      }
+    }
+    return newChartType;
+  });
+};
+
+const handleRefresh = () => {
+  const canvas = canvasRef.current;
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    if (chartType === 'pie') {
+      drawPieChart(ctx, currentData);
+    } else {
+      drawBarChart(ctx, currentData);
+    }
+  }
+};
 
   // Draw pie chart
   const drawPieChart = React.useCallback((ctx, data) => {
@@ -162,15 +204,18 @@ const DelayWidget = ({ widget, onRemove, onMove, onMouseDown, isDragging }) => {
 
   // Handle canvas drawing
   React.useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  const canvas = canvasRef.current;
+  if (canvas) {
     const ctx = canvas.getContext('2d');
     if (chartType === 'pie') {
       drawPieChart(ctx, currentData);
     } else {
       drawBarChart(ctx, currentData);
     }
-  }, [chartType, currentData, drawPieChart, drawBarChart]);
+  }
+}, [chartType, currentData, drawPieChart, drawBarChart]);
+
+
 
   // Auto-refresh effect
   React.useEffect(() => {
@@ -262,21 +307,22 @@ const DelayWidget = ({ widget, onRemove, onMove, onMouseDown, isDragging }) => {
     URL.revokeObjectURL(url);
   };
 
-  const toggleChartType = () => {
-    setChartType(chartType === 'pie' ? 'bar' : 'pie');
-  };
-
-  const handleRefresh = () => {
+  React.useEffect(() => {
+  if (!isMinimized && savedSettings) {
+    setChartType(savedSettings.chartType);
+    setSettings(savedSettings.settings);
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext('2d');
-      if (chartType === 'pie') {
-        drawPieChart(ctx, currentData);
+      if (savedSettings.chartType === 'pie') {
+        drawPieChart(ctx, savedSettings.currentData);
       } else {
-        drawBarChart(ctx, currentData);
+        drawBarChart(ctx, savedSettings.currentData);
       }
     }
-  };
+  }
+}, [isMinimized, savedSettings, drawPieChart, drawBarChart]);
+
 
   // Prevent drag on interactive elements
   const handleMouseDown = (e) => {
@@ -331,13 +377,14 @@ const DelayWidget = ({ widget, onRemove, onMove, onMouseDown, isDragging }) => {
               <Filter size={16} />
             </button>
             <button 
-              className="btn-icon"
-              onClick={() => setIsMinimized(!isMinimized)}
-              aria-label={isMinimized ? "Maximize widget" : "Minimize widget"}
-              title={isMinimized ? "Maximize" : "Minimize"}
-            >
-              {isMinimized ? <Maximize size={16} /> : <Minimize size={16} />}
-            </button>
+  className="btn-icon"
+  onClick={handleMinimize}
+  aria-label={isMinimized ? "Maximize widget" : "Minimize widget"}
+  title={isMinimized ? "Maximize" : "Minimize"}
+>
+  {isMinimized ? <Maximize size={16} /> : <Minimize size={16} />}
+</button>
+
             <button 
               className="btn-icon"
               onClick={onMove}
@@ -423,17 +470,19 @@ const DelayWidget = ({ widget, onRemove, onMove, onMouseDown, isDragging }) => {
               </div>
             )}
 
-            <div className="widget-content">
-              <canvas
-                ref={canvasRef}
-                width={360}
-                height={180}
-                className="chart-canvas"
-                onMouseMove={handleCanvasMouseMove}
-                onMouseLeave={handleCanvasMouseLeave}
-                aria-label={`${chartType} chart showing delay percentages by department`}
-              />
-            </div>
+            {!isMinimized && (
+              <div className="widget-content">
+                <canvas
+                  ref={canvasRef}
+                  width={360}
+                  height={180}
+                  className="chart-canvas"
+                  onMouseMove={handleCanvasMouseMove}
+                  onMouseLeave={handleCanvasMouseLeave}
+                  aria-label={`${chartType} chart showing delay percentages by department`}
+                />
+              </div>
+            )}
 
             <div className="widget-footer">
               <div className="footer-controls">

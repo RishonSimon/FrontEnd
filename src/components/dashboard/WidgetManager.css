@@ -6,6 +6,16 @@
   font-family: 'Inter', Arial, sans-serif;
 }
 
+.search-bar {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  margin-left: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
 /* Grid layout for widgets */
 .widget-grid {
   display: grid;
